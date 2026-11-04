@@ -1,0 +1,49 @@
+{
+  "version": 1,
+  "provenance": "Casos sintéticos escritos para este proyecto a partir del manual oficial; ninguna respuesta proviene de una consulta real.",
+  "query": {"issuer_ruc": "20000000001", "document_type": "01", "series": "F001", "number": 123, "issued_on": "2026-11-02", "amount": "123456789012345.67"},
+  "query_cases": [
+    {"id": "valid", "patch": {}, "valid": true},
+    {"id": "zero-amount", "patch": {"amount": "0.00"}, "valid": true},
+    {"id": "unknown-document-code", "patch": {"document_type": "ZZ"}, "valid": true},
+    {"id": "short-ruc", "patch": {"issuer_ruc": "123"}, "valid": false},
+    {"id": "unicode-digits", "patch": {"issuer_ruc": "２０００００００００１"}, "valid": false},
+    {"id": "invalid-day", "patch": {"issued_on": "2026-02-30"}, "valid": false},
+    {"id": "non-iso-date", "patch": {"issued_on": "02/11/2026"}, "valid": false},
+    {"id": "compact-date", "patch": {"issued_on": "20261102"}, "valid": false},
+    {"id": "negative-amount", "patch": {"amount": "-1.00"}, "valid": false},
+    {"id": "too-many-decimals", "patch": {"amount": "1.001"}, "valid": false},
+    {"id": "exponent", "patch": {"amount": "1e2"}, "valid": false},
+    {"id": "float-input", "patch": {"amount": 0.1}, "valid": false},
+    {"id": "zero-number", "patch": {"number": 0}, "valid": false},
+    {"id": "boolean-number", "patch": {"number": true}, "valid": false},
+    {"id": "overflow-number", "patch": {"number": 100000000}, "valid": false},
+    {"id": "lowercase-series", "patch": {"series": "f001"}, "valid": false},
+    {"id": "injection-amount", "patch": {"amount": "0,\"extra\":1"}, "valid": false}
+  ],
+  "response_cases": [
+    {"id": "accepted-integer", "body": {"success": true, "data": {"estadoCp": 1, "estadoRuc": "00", "condDomiRuc": "00"}}, "expected": {"document_status": "1", "issuer_status": "00", "issuer_address_status": "00", "observations": []}},
+    {"id": "not-found-is-successful-query", "body": {"success": true, "data": {"estadoCp": "0", "estadoRuc": "00", "condDomiRuc": "00", "observaciones": []}}, "expected": {"document_status": "0", "issuer_status": "00", "issuer_address_status": "00", "observations": []}},
+    {"id": "unknown-codes-preserved", "body": {"success": true, "future": 42, "data": {"estadoCp": 99, "estadoRuc": "98", "condDomiRuc": "97", "observaciones": ["Observación sintética"]}}, "expected": {"document_status": "99", "issuer_status": "98", "issuer_address_status": "97", "observations": ["Observación sintética"]}},
+    {"id": "manual-capitalization", "body": {"success": true, "data": {"estadoCp": 2, "estadoRuc": "00", "condDomiRuc": "12", "Observaciones": ["Prueba"]}}, "expected": {"document_status": "2", "issuer_status": "00", "issuer_address_status": "12", "observations": ["Prueba"]}},
+    {"id": "null-observations", "body": {"success": true, "data": {"estadoCp": 1, "estadoRuc": "00", "condDomiRuc": "00", "observaciones": null}}, "expected": {"document_status": "1", "issuer_status": "00", "issuer_address_status": "00", "observations": []}},
+    {"id": "remote-error", "body": {"success": false, "errorCode": "0100", "message": "No registrar este texto"}, "error": "remote"},
+    {"id": "missing-success", "body": {"data": {}}, "error": "protocol"},
+    {"id": "string-success", "body": {"success": "true", "data": {}}, "error": "protocol"},
+    {"id": "missing-data", "body": {"success": true}, "error": "protocol"},
+    {"id": "null-data", "body": {"success": true, "data": null}, "error": "protocol"},
+    {"id": "missing-status", "body": {"success": true, "data": {"estadoRuc": "00", "condDomiRuc": "00"}}, "error": "protocol"},
+    {"id": "boolean-status", "body": {"success": true, "data": {"estadoCp": true, "estadoRuc": "00", "condDomiRuc": "00"}}, "error": "protocol"},
+    {"id": "fractional-status", "body": {"success": true, "data": {"estadoCp": 1.5, "estadoRuc": "00", "condDomiRuc": "00"}}, "error": "protocol"},
+    {"id": "null-status", "body": {"success": true, "data": {"estadoCp": null, "estadoRuc": "00", "condDomiRuc": "00"}}, "error": "protocol"},
+    {"id": "invalid-observation", "body": {"success": true, "data": {"estadoCp": 1, "estadoRuc": "00", "condDomiRuc": "00", "observaciones": [null]}}, "error": "protocol"},
+    {"id": "html-instead-of-json", "raw_body": "<html>Servicio no disponible</html>", "error": "protocol"},
+    {"id": "truncated-json", "raw_body": "{\"success\":true,", "error": "protocol"}
+  ],
+  "identity_records": [{"dni": "00000001", "given_names": "PERSONA", "first_surname": "PRUEBA", "second_surname": "SINTETICA"}],
+  "identity_cases": [
+    {"id": "synthetic-match", "dni": "00000001", "found": true},
+    {"id": "synthetic-missing", "dni": "00000002", "found": false},
+    {"id": "invalid-dni", "dni": "123", "invalid": true}
+  ]
+}
