@@ -1,0 +1,20 @@
+{
+  "format_version": 1,
+  "language": "go",
+  "generator": {
+    "repository": "DataScienceResearchPeru/peru-sdk-models",
+    "revision": "fbd07a48d26a9094014c94f0dfe2de2cdd0718d7",
+    "files": {
+      "tools/generate.py": "4cac653a5c3383fe07ed1f87dc16d0152d094fb8fa28ff88540a98e617376f32",
+      "contracts/sunat/validity.schema.json": "da1cc4837ae075fa6e3d4f3f7449f30a5d124582cd12397c0475c63f19fda2d9",
+      "contracts/reniec/identity.prototype.schema.json": "55419fe3c3d5d8d7a880fa11405be8edf7dc4c3eb49848f60b07fad640e07661"
+    }
+  },
+  "conformance": {
+    "repository": "DataScienceResearchPeru/peru-sdk-conformance",
+    "revision": "96f6b934f2269865d9a524154537f0a579617083",
+    "path": "cases.json",
+    "sha256": "77d947fcb161b763413c85469d05e0a33d4162c4aebd8636c4890d490200d751"
+  },
+  "cases_file": "internal/conformance/cases.json"
+}
